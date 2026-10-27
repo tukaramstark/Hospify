@@ -1,119 +1,51 @@
-# 🏥 Hospify — Hospital Management System
+# Hospify
 
-**Hospify** is a web-based Hospital Management System developed to organize hospital information and streamline routine healthcare administration using modern web technologies.
+Hospify is a PHP/MySQL hospital management system for administrator and doctor workflows. This fork is being modernized incrementally without replacing the existing business modules.
 
-## ✨ Features
+## Verified modules
 
-- 🧑‍⚕️ **Patient Management** — Maintain patient information and records.
-- 👨‍⚕️ **Doctor Management** — Organize doctor profiles and details.
-- 📅 **Appointment Management** — Manage patient appointments, if implemented.
-- 🗂️ **Record Management** — Store and retrieve hospital-related information.
-- 🗄️ **Database Integration** — Manage application data using MySQL.
-- 🖥️ **User-Friendly Interface** — Simple interface built with HTML, CSS, and JavaScript.
+Repository inspection confirms administrator and doctor dashboards, patient registration/management/transfer/discharge, prescriptions, pharmacy categories and inventory, laboratory tests/results/vitals, equipment, employees, payroll, accounting, authentication, logout, and password-reset pages. Runtime completeness still requires a configured database.
 
-*Note: Retain only the features supported by your actual application.*
+## Stack
 
-## 🛠️ Tech Stack
+- PHP with server-rendered HTML
+- MySQL/MariaDB
+- HTML5, CSS3, JavaScript
+- Existing Bootstrap and dashboard assets, with an incremental Hospify design layer
 
-- **Frontend:** HTML5, CSS3, JavaScript
-- **Backend:** PHP
-- **Database:** MySQL
-- **Local Server:** XAMPP / Apache
+## Run locally with XAMPP
 
-## 📂 Project Structure
+1. Install XAMPP with Apache, PHP, and MySQL/MariaDB.
+2. Clone this repository into `htdocs/Hospify`.
+3. Start Apache and MySQL from XAMPP.
+4. Create a database named `hmisphp` in phpMyAdmin.
+5. Import `DB/hms.sql`.
+6. Review the existing local database configuration in `backend/admin/assets/inc/config.php` and `backend/doc/assets/inc/config.php`.
+7. Open `http://localhost/Hospify/`.
+8. Administrator login is at `backend/admin/`; doctor login is at `backend/doc/`.
 
-```text
-Hospify/
-├── index.php
-├── css/
-├── js/
-├── images/
-├── includes/
-├── config/
-├── database/
-└── README.md
-```
+Never put real credentials, patient records, API keys, or production data in this repository. Use `config/.env.example` as the documented starting point for future environment-based configuration.
 
-*The structure is an example. Modify it according to your actual folder and file names.*
+## Modernization status
 
-## ⚙️ Installation & Setup
+The five-phase modernization is being developed on `feature/hospify-next-modernization`:
 
-### Prerequisites
+1. **Audit and foundation:** verified audit, ignore rules, environment example, security helpers, and design tokens.
+2. **UI system:** responsive public shell, reusable visual patterns, accessible navigation, and dashboard foundations.
+3. **Authentication and authorization:** session hardening, CSRF coverage, legacy hash verification with upgrade to `password_hash()`.
+4. **Existing modules:** improve real administrator and doctor workflows and then the verified clinical/operations modules.
+5. **Verification and release:** PHP linting, database smoke tests, browser checks, navigation checks, and release documentation.
 
-- XAMPP or another PHP-compatible local server
-- PHP
-- MySQL
-- A web browser
+See [`docs/UPGRADE_AUDIT.md`](docs/UPGRADE_AUDIT.md) for verified findings and limitations.
 
-### Steps to Run Locally
+## Testing
 
-1. **Clone the repository**
+The repository currently has no automated test suite. Before release, run PHP syntax checks across modified files and test login, logout, protected-route access, forms, and database CRUD with synthetic data. MySQL and browser testing must be performed in a local XAMPP environment.
 
-   ```bash
-   git clone https://github.com/ashutoshpalhare/Hospify.git
-   ```
+## Security limitations
 
-2. **Move the project**
+This is a development modernization project, not a certified clinical system. Review access control, audit logging, backups, privacy requirements, deployment hardening, and applicable healthcare regulations before any real-world use. Existing modules still require a complete module-by-module security review.
 
-   Place the project folder inside the XAMPP `htdocs` directory.
+## License
 
-3. **Start Apache and MySQL**
-
-   Open the XAMPP Control Panel and start both services.
-
-4. **Set up the database**
-
-   - Visit `http://localhost/phpmyadmin/`
-   - Create the database required by the application.
-   - Import the provided `.sql` file, if available.
-
-5. **Configure the database connection**
-
-   Update the database host, database name, username, and password in the relevant PHP configuration file.
-
-6. **Launch the application**
-
-   Open your browser and visit:
-
-   ```text
-   http://localhost/Hospify/
-   ```
-
-## 📸 Screenshots
-
-Add screenshots to demonstrate your application's interface.
-
-```md
-![Dashboard](screenshots/dashboard.png)
-```
-
-## 🎯 Project Objective
-
-Hospify aims to simplify hospital administration by providing a centralized system for managing hospital-related information through a web-based application.
-
-## 🔮 Future Enhancements
-
-- Role-based authentication
-- Patient appointment scheduling
-- Doctor availability management
-- Billing and invoice management
-- Medical reports and analytics
-- Enhanced security and responsive design
-
-*These enhancements should be treated as future scope unless already implemented.*
-
-## 🔐 Security & Privacy
-
-- Never commit database passwords, API keys, or other secret credentials.
-- Use appropriate authentication and authorization controls.
-- Avoid uploading real patient records or other sensitive medical information to a public repository.
-
-## 👨‍💻 Author
-
-**Your Name**
-
-- GitHub: [@ashutoshpalhare](https://github.com/ashutoshpalhare)
-
-## 📄 License
-
-This project is intended for educational and learning purposes. Add a `LICENSE` file if you want to specify the terms under which others may use or distribute it.
+No explicit license is currently included. Add one before distributing the project.
