@@ -1,13 +1,14 @@
 <?php
-function check_login()
+declare(strict_types=1);
+
+function check_login(): void
 {
-if(strlen($_SESSION['ad_id'])==0)
-	{
-		$host = $_SERVER['HTTP_HOST'];
-		$uri  = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-		$extra="index.php";
-		$_SESSION["ad_id"]="";
-		header("Location: http://$host$uri/$extra");
-	}
+    if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+    if (empty($_SESSION['ad_id']) || !ctype_digit((string)$_SESSION['ad_id'])) {
+        $_SESSION = [];
+        if (ini_get('session.use_cookies')) { $params = session_get_cookie_params(); setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']); }
+        session_destroy();
+        header('Location: index.php');
+        exit;
+    }
 }
-?>
