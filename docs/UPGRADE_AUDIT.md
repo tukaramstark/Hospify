@@ -1,69 +1,62 @@
 # Hospify Modernization Audit
 
-**Audit status:** Phase 0 completed from repository inspection on 2026-10-27.
+**Audit status:** Phases 1–4 implemented on the modernization branch; Phase 5 documented with environment-limited verification.
 **Repository:** `tukaramstark/Hospify`
-**Scope:** Verified repository structure and representative application entry points. Database execution and browser testing were not available during this audit.
+**Audit date:** 2026-10-27
 
 ## 1. Existing architecture
 
-Hospify is a server-rendered PHP application backed by MySQL/MariaDB. Public entry points are `index.php` and `index2.php`. Authenticated code is separated into `backend/admin` and `backend/doc`, each with its own assets and shared includes. Database access currently uses duplicated `mysqli` configuration files.
+Hospify is a server-rendered PHP application backed by MySQL/MariaDB. Public entry points are `index.php` and `index2.php`. Authenticated code is separated into `backend/admin` and `backend/doc`, each with its own assets and shared includes. Database access uses duplicated `mysqli` configuration files, now prepared for environment-based settings.
 
-The application is page-oriented: PHP pages combine request processing, database queries, and HTML rendering. Modernization will be incremental and preserve existing workflows.
+The application is page-oriented: PHP pages combine request processing, database queries, and HTML rendering. Modernization was kept incremental to preserve existing workflows.
 
 ## 2. Verified functional modules
 
-Repository inspection confirms administrator and doctor workflows for:
-
-- Administrator and doctor dashboards and accounts
-- Patient registration, management, viewing, transfer, and discharge
-- Prescriptions and pharmaceutical inventory
-- Pharmacy categories
-- Laboratory tests, results, and patient vitals
-- Equipment inventory
-- Employee and payroll workflows
-- Accounting records and payable/receivable entries
-- Authentication, logout, and password reset pages
+Repository inspection confirms administrator and doctor dashboards and accounts; patient registration, management, viewing, transfer, and discharge; prescriptions and pharmaceutical inventory; pharmacy categories; laboratory tests, results, and patient vitals; equipment inventory; employee and payroll workflows; accounting records and payable/receivable entries; authentication, logout, and password-reset pages.
 
 File presence does not prove that every workflow is complete; runtime verification requires a configured database.
 
 ## 3. Database tables and relationships
 
-`DB/hms.sql` is the verified schema source. Inspected code references `his_admin`, `his_docs`, and patient, pharmacy, laboratory, prescription, payroll, employee, accounting, and equipment data sets. The SQL dump remains the source of truth for exact columns and relationships.
+`DB/hms.sql` remains the schema source of truth. Inspected code references `his_admin`, `his_docs`, and patient, pharmacy, laboratory, prescription, payroll, employee, accounting, and equipment data sets. No destructive schema change was made.
 
-No destructive schema change is planned. Future changes must be additive, versioned, backed up, and documented with rollback notes.
+## 4. Implemented security improvements
 
-## 4. Confirmed bugs and security concerns
+- Added backward-compatible verification for both `password_hash()` records and legacy `sha1(md5(password))` records.
+- Successful legacy logins automatically upgrade the stored password to `password_hash()`.
+- Regenerated the session ID after successful admin and doctor authentication.
+- Added CSRF tokens and validation to the modernized admin and doctor login forms.
+- Strengthened admin and doctor route guards.
+- Fully invalidated session data and cookies during logout.
+- Added environment-based database configuration support and avoided exposing connection details to users.
+- Added shared HTML escaping and security helpers.
 
-- Administrator and doctor logins use legacy `sha1(md5(password))` hashing.
-- Login handlers assign session identifiers before confirming authentication success.
-- Session IDs are not regenerated after successful authentication in inspected handlers.
-- Database credentials are hard-coded in duplicated `config.php` files.
-- Route guards use `strlen($_SESSION[...])` and are not centralized.
-- CSRF protection was not present in inspected login handlers.
-- Validation and output escaping are inconsistent across the page-oriented codebase.
-- Database failure handling requires safer production behavior.
-- The public site contains placeholder contact values and overlapping entry points.
-- The repository had no `.gitignore` before this modernization branch.
-- `assets2/images/Thumbs.db` is an unnecessary generated file.
+The remaining page-level state-changing workflows still require a complete module-by-module CSRF and authorization review.
 
-## 5. Duplicate or obsolete assets
+## 5. UI and maintainability improvements
 
-Two public asset families (`assets` and `assets2`) and separate admin/doctor vendor bundles exist. Bootstrap 4, Font Awesome 4, jQuery-era plugins, and older dashboard bundles are present. They will not be removed until route usage is verified.
+- Rebuilt the public homepage with a responsive healthcare SaaS visual system.
+- Added reusable design tokens, cards, buttons, responsive hero, footer, and accessible navigation behavior.
+- Updated administrator and doctor dashboard head includes to use the modern design layer.
+- Preserved the existing module assets and workflows rather than deleting or replacing them.
+- Added setup, security, and verification documentation.
 
-## 6. Missing or incomplete functionality
+## 6. Five-phase status
 
-Runtime confirmation is still required for login/logout, password migration, CSRF coverage, authorization on every action, automated tests, browser responsiveness, environment-based configuration, logging, backups, and clinical compliance controls.
+1. **Audit and foundation — complete:** audit, ignore rules, environment example, shared helpers, and configuration hardening.
+2. **UI system — complete:** public shell, design system, responsive navigation, and dashboard asset foundation.
+3. **Authentication and authorization — complete for admin/doctor entry points:** modern password verification with legacy fallback, hash upgrade, session regeneration, CSRF login protection, route guards, and logout invalidation.
+4. **Existing module modernization — foundation complete:** shared dashboard presentation improved; existing module logic preserved for deeper runtime review.
+5. **Verification and release — documentation complete, execution pending local environment:** checklist and manual test instructions added; PHP/MySQL/browser tools were unavailable here.
 
-## 7. Five-phase plan
+## 7. Verification limits
 
-1. Foundation and audit: documentation, safe configuration conventions, security helpers, and public shell.
-2. UI system: typography, color tokens, responsive navigation, cards, forms, tables, alerts, and dashboard styling.
-3. Authentication and authorization: legacy hash verification with automatic upgrade, session regeneration, guards, CSRF, and safer configuration.
-4. Existing modules: modernize administrator and doctor dashboards, then improve verified patient, pharmacy, laboratory, payroll, accounting, prescription, and equipment workflows.
-5. Verification and release: PHP syntax checks, database smoke tests when MySQL is available, browser checks, navigation checks, documentation, and limitations.
+Not executed in the connected repository environment: PHP CLI syntax checks, MySQL import/schema validation, login/logout smoke tests, CRUD tests, responsive browser checks, console inspection, production security review, privacy review, backup verification, and clinical compliance verification.
+
+See `docs/VERIFICATION_CHECKLIST.md` and `README.md` for local setup and test steps.
 
 ## Verified versus assumed
 
-**Verified:** repository structure, entry points, named modules, duplicated configuration, legacy login hashing, basic session guards, SQL dump, missing `.gitignore`, and legacy asset families.
+**Verified:** repository structure, entry points, named modules, duplicated configuration, legacy login hashing, basic session guards, SQL dump, missing `.gitignore` before this branch, legacy assets, and all changes listed above by repository inspection.
 
-**Not verified:** exact runtime behavior of every module, database connectivity, credentials, all schema constraints, browser responsiveness, and reachability of every page.
+**Not verified:** exact runtime behavior of every module, database connectivity, credentials, all schema constraints, browser responsiveness, CRUD results, and reachability of every page.
