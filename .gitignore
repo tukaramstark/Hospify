@@ -1,0 +1,28 @@
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+config.local.php
+
+# Runtime and debug output
+*.log
+logs/
+php-error.log
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Temporary and generated files
+*.tmp
+*.temp
+*.cache
+vendor/
+node_modules/
+
+# Local database exports and patient data
+*.sql.zip
+backups/
+private-data/
